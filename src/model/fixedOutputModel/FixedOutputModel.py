@@ -5,16 +5,16 @@ import numpy as np
 
 
 class FixedOutputModel(Model):
-    key_list = Config.load_json(file_path=CONFIG_KEY + '/fixedOutputModelKey.json')
+    # key_list = Config.load_json(file_path=CONFIG_KEY + '/fixedOutputModelKey.json')
 
     def __init__(self, config):
         super(FixedOutputModel, self).__init__(config)
 
     def predict(self, sess=None, state=None):
         action = [0 for _ in range(self.config.config_dict['ACTION_SPACE'][0])]
-        action[0] = self.config.config_dict['F1']
-        action[1] = self.config.config_dict['PROB_SAMPLE_ON_REAL']
-        action[2] = self.config.config_dict['PROB_TRAIN_ON_REAL']
+        action[0] = 0.6
+        action[1] = 0.6
+        action[2] = 0.6
 
         return np.array(action)
 

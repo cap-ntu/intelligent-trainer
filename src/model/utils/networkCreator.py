@@ -48,7 +48,7 @@ class NetworkCreator(object):
                 last_layer_act = layer_config['ACT']
         if output_norm:
             net = tl.layers.LambdaLayer(prev_layer=net,
-                                        fn=lambda x: (x * output_norm[1]) + output_norm[1],
+                                        fn=lambda x: (x * output_norm[0]) + output_norm[1],
                                         name=net_name + '_NORM')
         if output_high is not None and output_low is not None:
             if last_layer_act != "IDENTITY":

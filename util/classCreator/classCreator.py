@@ -11,7 +11,7 @@ from src.config.config import Config
 from src.model.ddpgModel.ddpgModel import DDPGModel
 from src.model.dqnModel.dqnModel import DQNModel
 from src.model.trpoModel.trpoModel import TrpoModel
-from src.model.fxiedOutputModel.FixedOutputModel import FixedOutputModel
+from src.model.fixedOutputModel.FixedOutputModel import FixedOutputModel
 from src.model.dynamicsEnvMlpModel.dynamicsEnvMlpModel import DynamicsEnvMlpModel
 from src.model.reinforceModel.reinforceModel import REINFORCEModel
 from src.env.trainerEnv.baselineTrainerEnv import BaselineTrainerEnv

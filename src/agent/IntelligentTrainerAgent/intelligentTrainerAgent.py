@@ -6,7 +6,7 @@ import tensorflow as tf
 import numpy as np
 import easy_tf_log
 import config as cfg
-
+from src.model.fixedOutputModel.FixedOutputModel import FixedOutputModel
 
 class IntelligentTrainerAgent(Agent):
     key_list = Config.load_json(file_path=CONFIG_KEY + '/intelligentTrainerAgentKey.json')
@@ -19,6 +19,8 @@ class IntelligentTrainerAgent(Agent):
         self.sess = tf.get_default_session()
 
     def predict(self, state, *args, **kwargs):
+        if isinstance(self.model, FixedOutputModel):
+            return self.model.predict()
         if self.assigned_action is not None:
             ac = list(self.assigned_action)
             self.assigned_action = None

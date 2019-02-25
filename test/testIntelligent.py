@@ -185,14 +185,14 @@ if __name__ == '__main__':
     #                          exp_end_with='_intel_v5_1_trainer_state_is_sample_count')
 
     # # Reacher-v1
-    # run_multiple_experiments(game_env_name='Reacher-v1',
-    #                          cuda_device=1,
-    #                          num=1,
-    #                          config_set_path=CONFIG_SET_REACHER_INTEL,
-    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_REACHER_INTEL,
-    #                          target_model_type='TRPO',
-    #                          intelligent_trainer_model_type='DQN',
-    #                          exp_end_with='_intel_v5_1_trainer_state_is_sample_count')
+    run_multiple_experiments(game_env_name='Reacher-v1',
+                             cuda_device=1,
+                             num=1,
+                             config_set_path=CONFIG_SET_REACHER_INTEL,
+                             model_config_dict=MODEL_NET_WORK_CONFIG_DICT_REACHER_INTEL,
+                             target_model_type='TRPO',
+                             intelligent_trainer_model_type='FIX',
+                             exp_end_with='_debug_FIX')
 
     # HalfCheetah
     # run_multiple_experiments(game_env_name='HalfCheetah',
@@ -204,38 +204,38 @@ if __name__ == '__main__':
     #                          intelligent_trainer_model_type='DQN',
     #                          exp_end_with='_intel_v5_1_trainer_state_is_sample_count')
     # # # Swimmer
-    run_multiple_experiments(game_env_name='Swimmer-v1',
-                             cuda_device=0,
-                             num=1,
-                             config_set_path=CONFIG_SET_SWIMMER_INTEL_REINFORCE,
-                             model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL_REINFORCE,
-                             target_model_type='TRPO',
-                             intelligent_trainer_model_type='RANDOM',   #'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
-                             exp_end_with='_debug')
-
-    run_multiple_experiments(game_env_name='Swimmer-v1',
-                             cuda_device=0,
-                             num=1,
-                             config_set_path=CONFIG_SET_SWIMMER_INTEL,
-                             model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL,
-                             target_model_type='TRPO',
-                             intelligent_trainer_model_type='DQN',  # 'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
-                             exp_end_with='_debug')
-
-    run_multiple_experiments(game_env_name='Swimmer-v1',
-                             cuda_device=0,
-                             num=1,
-                             config_set_path=CONFIG_SET_SWIMMER_INTEL,
-                             model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL,
-                             target_model_type='TRPO',
-                             intelligent_trainer_model_type='REINFORCE',  # 'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
-                             exp_end_with='_debug')
-
-    run_multiple_experiments(game_env_name='Swimmer-v1',
-                             cuda_device=0,
-                             num=1,
-                             config_set_path=CONFIG_SET_SWIMMER_INTEL,
-                             model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL,
-                             target_model_type='TRPO',
-                             intelligent_trainer_model_type='FIX',  # 'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
-                             exp_end_with='_debug')
+    # run_multiple_experiments(game_env_name='Swimmer-v1',
+    #                          cuda_device=0,
+    #                          num=1,
+    #                          config_set_path=CONFIG_SET_SWIMMER_INTEL_REINFORCE,
+    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL_REINFORCE,
+    #                          target_model_type='TRPO',
+    #                          intelligent_trainer_model_type='RANDOM',   #'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
+    #                          exp_end_with='_debug')
+    #
+    # run_multiple_experiments(game_env_name='Swimmer-v1',
+    #                          cuda_device=0,
+    #                          num=1,
+    #                          config_set_path=CONFIG_SET_SWIMMER_INTEL,
+    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL,
+    #                          target_model_type='TRPO',
+    #                          intelligent_trainer_model_type='DQN',  # 'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
+    #                          exp_end_with='_debug')
+    #
+    # run_multiple_experiments(game_env_name='Swimmer-v1',
+    #                          cuda_device=0,
+    #                          num=1,
+    #                          config_set_path=CONFIG_SET_SWIMMER_INTEL,
+    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL,
+    #                          target_model_type='TRPO',
+    #                          intelligent_trainer_model_type='REINFORCE',  # 'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
+    #                          exp_end_with='_debug')
+    #
+    # run_multiple_experiments(game_env_name='Swimmer-v1',
+    #                          cuda_device=0,
+    #                          num=1,
+    #                          config_set_path=CONFIG_SET_SWIMMER_INTEL,
+    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL,
+    #                          target_model_type='TRPO',
+    #                          intelligent_trainer_model_type='FIX',  # 'DQN', 'REINFORCE' , 'FIX', 'RANDOM'
+    #                          exp_end_with='_debug')
