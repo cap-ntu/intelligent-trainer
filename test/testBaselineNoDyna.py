@@ -3,7 +3,6 @@
 Main script to run the tests for NoCyber (equal to original DRL), example:
 '''
 
-
 import os
 import sys
 
@@ -19,6 +18,17 @@ from src.util.plotter import Plotter
 from util.utilNew import create_tmp_config_file
 import config as cfg
 import time
+from conf.configSet_MountainCarContinuous_Intel_No_Dyna import \
+        CONFIG_SET_MOUNTAIN_CAR_CONTINUOUS_CONFIG_INTEL_NO_DYNA, \
+        MODEL_NET_WORK_CONFIG_DICT_MOUNTAIN_CAR_CONTINUOUS_INTEL_NO_DYNA
+from conf.configSet_Reacher_Intel_No_Dyna import CONFIG_SET_REACHER_INTEL_NO_DYNA, \
+    MODEL_NET_WORK_CONFIG_DICT_REACHER_INTEL_NO_DYNA
+from conf.configSet_HalfCheetah_Intel_No_Dyna import CONFIG_SET_HALFCHEETAH_INTEL_NO_DYNA, \
+    MODEL_NET_WORK_CONFIG_DICT_HALFCHEETAH_INTEL_NO_DYNA
+from conf.configSet_Swimmer_Intel_No_Dyna import CONFIG_SET_SWIMMER_INTEL_NO_DYNA, \
+    MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL_NO_DYNA
+from conf.configSet_Pendulum_Intel_No_Dyna import CONFIG_SET_PENDULUM_INTEL_NO_DYNA, \
+    MODEL_NET_WORK_CONFIG_DICT_PENDULUM_INTEL_NO_DYNA
 
 
 def run_multiple_experiments(game_env_name, cuda_device, num, config_set_path, model_config_dict, target_model_type,
@@ -68,55 +78,39 @@ def run_multiple_experiments(game_env_name, cuda_device, num, config_set_path, m
             sess.__exit__(None, None, None)
     for log in log_dir_path:
         print(log)
-    Plotter.plot_multiply_target_agent_reward(path_list=log_dir_path)
+    Plotter.plot_multiply_target_agent_reward(path_list=log_dir_path, fig_id=1)
 
+
+model_type_dict = {
+    "Pendulum-v0": 'DDPG',
+    "MountainCarContinuous-v0": 'DDPG',
+    "Reacher-v1": 'TRPO',
+    "HalfCheetah": 'TRPO',
+    "Swimmer-v1": 'TRPO',
+}
+
+env_config_dict = {
+    "Pendulum-v0": (CONFIG_SET_PENDULUM_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_PENDULUM_INTEL_NO_DYNA),
+    "MountainCarContinuous-v0": (CONFIG_SET_MOUNTAIN_CAR_CONTINUOUS_CONFIG_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_MOUNTAIN_CAR_CONTINUOUS_INTEL_NO_DYNA),
+    "Reacher-v1": (CONFIG_SET_REACHER_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_REACHER_INTEL_NO_DYNA),
+    "HalfCheetah": (CONFIG_SET_HALFCHEETAH_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_HALFCHEETAH_INTEL_NO_DYNA),
+    "Swimmer-v1": (CONFIG_SET_SWIMMER_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL_NO_DYNA),
+}
+
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--env', type=str)
+parser.add_argument('--cuda_id', type=int, default=0)
+parser.add_argument('--num', type=int, default=1)
 
 if __name__ == '__main__':
-    from conf.configSet_MountainCarContinuous_Intel_No_Dyna import CONFIG_SET_MOUNTAIN_CAR_CONTINUOUS_CONFIG_INTEL_NO_DYNA, \
-        MODEL_NET_WORK_CONFIG_DICT_MOUNTAIN_CAR_CONTINUOUS_INTEL_NO_DYNA
-    from conf.configSet_Reacher_Intel_No_Dyna import CONFIG_SET_REACHER_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_REACHER_INTEL_NO_DYNA
-    from conf.configSet_HalfCheetah_Intel_No_Dyna import CONFIG_SET_HALFCHEETAH_INTEL_NO_DYNA, \
-        MODEL_NET_WORK_CONFIG_DICT_HALFCHEETAH_INTEL_NO_DYNA
-    from conf.configSet_Swimmer_Intel_No_Dyna import CONFIG_SET_SWIMMER_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_SWIMMER_INTEL_NO_DYNA
-    from conf.configSet_Pendulum_Intel_No_Dyna import CONFIG_SET_PENDULUM_INTEL_NO_DYNA, MODEL_NET_WORK_CONFIG_DICT_PENDULUM_INTEL_NO_DYNA
 
-    # Pendulum-v0
-    run_multiple_experiments(game_env_name='Pendulum-v0',
-                             cuda_device=0,
-                             config_set_path=CONFIG_SET_PENDULUM_INTEL_NO_DYNA,
-                             model_config_dict=MODEL_NET_WORK_CONFIG_DICT_PENDULUM_INTEL_NO_DYNA,
-                             num=2,
-                             target_model_type='DDPG')
-
-    # MountainCarContinuous-v0
-    # run_multiple_experiments(game_env_name='MountainCarContinuous-v0',
-    #                          cuda_device=2,
-    #                          num=2,
-    #                          config_set_path=CONFIG_SET_MOUNTAIN_CAR_CONTINUOUS_CONFIG_INTEL_NO_DYNA,
-    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_MOUNTAIN_CAR_CONTINUOUS_INTEL_NO_DYNA,
-    #                          target_model_type='DDPG')
-
-    # # Reacher-v1
-    # run_multiple_experiments(game_env_name='Reacher-v1',
-    #                          cuda_device=2,
-    #                          num=2,
-    #                          config_set_path=CONFIG_SET_REACHER_INTEL_NO_DYNA,
-    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_REACHER_INTEL_NO_DYNA,
-    #                          target_model_type='TRPO')
-
-    # # HalfCheetah
-    # run_multiple_experiments(game_env_name='HalfCheetah',
-    #                          cuda_device=2,
-    #                          num=2,
-    #                          config_set_path=CONFIG_SET_HALFCHEETAH_INTEL_NO_DYNA,
-    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_HALFCHEETAH_INTEL_NO_DYNA,
-    #                          target_model_type='TRPO')
-
-    # # Swimmer
-    # run_multiple_experiments(game_env_name='Swimmer-v1',
-    #                          cuda_device=2,
-    #                          num=2,
-    #                          config_set_path=CONFIG_SET_SWIMMER_NO_DYNA,
-    #                          model_config_dict=MODEL_NET_WORK_CONFIG_DICT_SWIMMER_NO_DYNA,
-    #                          target_model_type='TRPO')
-    #
+    args = parser.parse_args()
+    print(args)
+    run_multiple_experiments(game_env_name=args.env,
+                             cuda_device=args.cuda_id,
+                             config_set_path=env_config_dict[args.env][0],
+                             model_config_dict=env_config_dict[args.env][1],
+                             num=args.num,
+                             target_model_type=model_type_dict[args.env])

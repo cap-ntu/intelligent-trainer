@@ -1,4 +1,4 @@
-name: py3.5
+name: intelligenttrainer
 channels: !!python/tuple
 - defaults
 dependencies:
@@ -17,7 +17,7 @@ dependencies:
   - absl-py==0.1.13
   - astor==0.6.2
   - atari-py==0.1.1
-  - baselines (/home/dls/CAP/baselines)==0.1.5
+  - baselines==0.1.5
   - bleach==1.5.0
   - cffi==1.11.5
   - chardet==3.0.4
@@ -32,7 +32,7 @@ dependencies:
   - gast==0.2.0
   - glfw==1.6.0
   - grpcio==1.11.0
-  - gym (/home/dls/CAP/gym)==0.7.4
+  - gym==0.7.4
   - h5py==2.7.1
   - html5lib==0.9999999
   - idna==2.6
@@ -77,5 +77,4 @@ dependencies:
   - urllib3==1.22
   - werkzeug==0.14.1
   - zmq==0.0.0
-prefix: /home/dls/anaconda3/envs/py3.5
 
