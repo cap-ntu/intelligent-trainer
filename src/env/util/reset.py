@@ -55,8 +55,8 @@ def swimmer_reset_function():
     return swimmer_instance.reset()
 
 
-def CFD_reset_function():
-    return CFD_instance.reset()
+# def CFD_reset_function():
+#     return CFD_instance.reset()
 
 
 RESET_FUNCTION_ENV_DICT = {
@@ -67,6 +67,6 @@ RESET_FUNCTION_ENV_DICT = {
     "Swimmer-v1": swimmer_reset_function,
     "HalfCheetah": half_cheetah_reset_func,
     "Reacher-v1": reacher_reset_function,
-    "CFD": CFD_reset_function,
+    # "CFD": CFD_reset_function,
     "InvertedPendulum-v1": inverted_pendulum_reset_function
 }

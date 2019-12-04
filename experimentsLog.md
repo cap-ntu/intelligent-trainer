@@ -1,5 +1,8 @@
 ### Exp log
-
+2019 12 04
+1. Pen car swimmer halfcheetah no dyna rerun
+2. Pen car swimmer halfcheetah RANDOM rerun
+3. Pen car swimmer halfcheetah DQN rerun
 
 2018.8.15
 

@@ -59,6 +59,7 @@ def run_multiple_experiments(game_env_name, cuda_device, num, config_set_path, m
                                                    cuda_device=cuda_device,
                                                    bound_file=get_bound_file(env_name=game_env_name),
                                                    done_fn=DONE_FUNCTION_ENV_DICT[game_env_name],
+                                                   reset_fn=RESET_FUNCTION_ENV_DICT[game_env_name],
                                                    target_model_type=target_model_type,
                                                    exp_log_end=exp_end_with)
 
