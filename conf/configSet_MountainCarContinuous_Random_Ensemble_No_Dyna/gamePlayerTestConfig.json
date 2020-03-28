@@ -1,0 +1,10 @@
+{
+  "EPOCH": 1,
+  "GAME_NAME": "MountainCarContinuous-v0",
+  "LOG_FLAG": 1,
+  "MAX_REAL_ENV_SAMPLE": 30000,
+  "REAL_ENV_SAMPLE_TRAIN_RATION": 0.8,
+  "SAVE_CONFIG_FILE_FLAG": 1,
+  "SEED": 7869,
+  "STEP": 30000000
+}

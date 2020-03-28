@@ -1,0 +1,81 @@
+{
+  "DYNAMICS_ERROR_ESTIMATE_MODEL": {
+    "BATCH_SIZE": 32,
+    "EPOCHS": 1,
+    "INPUT_SPACE": [
+      3
+    ],
+    "LEARNING_RATE": 0.01,
+    "LOG_FLAG": 1,
+    "NAME": "DYNAMICS_ERRORMlpModel",
+    "NET_CONFIG": [
+      {
+        "ACT": "TANH",
+        "B_INIT_VALUE": 0.0,
+        "NAME": "1b",
+        "N_UNITS": 10,
+        "TYPE": "DENSE",
+        "W_NORMAL_STDDEV": 0.01
+      },
+      {
+        "ACT": "TANH",
+        "B_INIT_VALUE": 0.0,
+        "NAME": "2b",
+        "N_UNITS": 10,
+        "TYPE": "DENSE",
+        "W_NORMAL_STDDEV": 0.001
+      },
+      {
+        "ACT": "RELU",
+        "B_INIT_VALUE": 0.0,
+        "NAME": "4b",
+        "N_UNITS": 1,
+        "TYPE": "DENSE",
+        "W_NORMAL_STDDEV": 0.001
+      }
+    ],
+    "OUTPUT_SPACE": [
+      1
+    ]
+  },
+  "STATE_ESTIMATE_MODEL": {
+    "BATCH_SIZE": 32,
+    "EPOCHS": 1,
+    "INPUT_SPACE": [
+      3
+    ],
+    "LEARNING_RATE": 0.1,
+    "LOG_FLAG": 1,
+    "NAME": "STATE_ESTIMATEMlpModel",
+    "NET_CONFIG": [
+      {
+        "ACT": "TANH",
+        "B_INIT_VALUE": 0.0,
+        "NAME": "1b",
+        "N_UNITS": 10,
+        "TYPE": "DENSE",
+        "W_NORMAL_STDDEV": 0.01
+      },
+      {
+        "ACT": "TANH",
+        "B_INIT_VALUE": 0.0,
+        "NAME": "2b",
+        "N_UNITS": 10,
+        "TYPE": "DENSE",
+        "W_NORMAL_STDDEV": 0.001
+      },
+      {
+        "ACT": "TANH",
+        "B_INIT_VALUE": 0.0,
+        "NAME": "4b",
+        "N_UNITS": 1,
+        "TYPE": "DENSE",
+        "W_NORMAL_STDDEV": 0.001
+      }
+    ],
+    "OUTPUT_SPACE": [
+      1
+    ]
+  },
+  "STEP": 1
+}

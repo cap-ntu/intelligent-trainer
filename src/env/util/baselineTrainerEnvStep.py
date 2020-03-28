@@ -278,7 +278,7 @@ class BaselineTrainerEnvStep(Step):
                                                                delta_state_label_set=data['delta'],
                                                                sess=tf.get_default_session())
 
-            env.cyber_env.print_log_queue(env.status_key['TRAIN'])
+        env.cyber_env.print_log_queue(env.status_key['TRAIN'])
         env.dyna_error_dequeu.append(final_step_dynamics_train_loss)
         if 'STE_V3_TEST_MOVE_OUT' in cfg.config_dict and cfg.config_dict['STE_V3_TEST_MOVE_OUT'] is True:
             pass

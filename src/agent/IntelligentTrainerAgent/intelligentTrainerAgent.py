@@ -17,40 +17,55 @@ class IntelligentTrainerAgent(Agent):
                                                       env=env)
         self.sample_count = 0
         self.sess = tf.get_default_session()
+        self.prev_action = self.model.action_iterator[np.random.randint(len(self.model.action_iterator))]
+        self.remain_action_flag = True
 
     def predict(self, state, *args, **kwargs):
-        if self.assigned_action is not None:
-            ac = list(self.assigned_action)
-            self.assigned_action = None
-            state = np.reshape(state, [1, -1])
-            re = np.array(self.model.predict(self.sess, state))
-            if len(re) > len(ac):
-                for i in range(len(ac), len(re)):
-                    ac.append(re[i])
-            self.sample_count += 1
-            if 'F1=0' in cfg.config_dict and cfg.config_dict['F1=0'] is True:
-                ac[0] = 0.0
-            if 'F2=0' in cfg.config_dict and cfg.config_dict['F2=0'] is True:
-                ac[1] = 0.0
-            return np.array(ac)
+        if self.remain_action_flag is True:
+            # self.remain_action_flag = False
+            print("self.remain_action_flag is True")
+            return (np.array(self.prev_action))*1.0
         else:
-            state = np.reshape(state, [1, -1])
-            count = self.sample_count
-            eps = 1.0 - (self.config.config_dict['EPS'] - self.config.config_dict['EPS_GREEDY_FINAL_VALUE']) * \
-                  (count / self.config.config_dict['EPS_ZERO_FLAG'])
-            if eps < 0:
-                eps = 0.0
-            rand_eps = np.random.rand(1)
-            if self.config.config_dict['EPS_GREEDY_FLAG'] == 1 and rand_eps < eps:
-                res = self.model.action_iterator[np.random.randint(len(self.model.action_iterator))]
+            self.remain_action_flag = True
+            if self.assigned_action is not None:
+                print("self.assigned_action is True")
+                ac = list(self.assigned_action)
+                self.assigned_action = None
+                state = np.reshape(state, [1, -1])
+                re = np.array(self.model.predict(self.sess, state))
+                if len(re) > len(ac):
+                    for i in range(len(ac), len(re)):
+                        ac.append(re[i])
+                self.sample_count += 1
+                if 'F1=0' in cfg.config_dict and cfg.config_dict['F1=0'] is True:
+                    ac[0] = 0.0
+                if 'F2=0' in cfg.config_dict and cfg.config_dict['F2=0'] is True:
+                    ac[1] = 0.0
+                return np.array(ac)*1.0
             else:
-                res = np.array(self.model.predict(self.sess, state))
-            if 'F1=0' in cfg.config_dict and cfg.config_dict['F1=0'] is True:
-                res[0] = 0.0
-            if 'F2=0' in cfg.config_dict and cfg.config_dict['F2=0'] is True:
-                res[1] = 0.0
-            self.sample_count += 1
-            return res
+                print("self.assigned_action is False")
+                state = np.reshape(state, [1, -1])
+                count = self.sample_count
+                eps = 1.0 - (self.config.config_dict['EPS'] - self.config.config_dict['EPS_GREEDY_FINAL_VALUE']) * \
+                      (count / self.config.config_dict['EPS_ZERO_FLAG'])
+                if eps < 0:
+                    eps = 0.0
+                rand_eps = np.random.rand(1)
+                # print("a_self.model.action_iterator=", self.model._action_iterator)
+                if self.config.config_dict['EPS_GREEDY_FLAG'] == 1 and rand_eps < eps:
+                    print("using eps greedy random action")
+                    res = self.model.action_iterator[np.random.randint(len(self.model.action_iterator))]
+                else:
+                    print("using action from model")
+                    res = np.array(self.model.predict(self.sess, state))
+
+                # print("b_self.model.action_iterator=", self.model.action_iterator)
+                if 'F1=0' in cfg.config_dict and cfg.config_dict['F1=0'] is True:
+                    res[0] = 0.0
+                if 'F2=0' in cfg.config_dict and cfg.config_dict['F2=0'] is True:
+                    res[1] = 0.0
+                self.sample_count += 1
+                return res*1.0
 
     def update(self):
         # TODO finish your own update by using API with self.model

@@ -1,0 +1,12 @@
+{
+    "ACTION_SPACE": [
+        3
+    ],
+  "F1": 0.0,
+  "LOG_FLAG": 1,
+    "PROB_SAMPLE_ON_REAL": 0.0,
+    "PROB_TRAIN_ON_REAL": 1.0,
+    "STATE_SPACE": [
+        1
+    ]
+}

@@ -10,7 +10,7 @@ from src.model.utils.memory_dqn import MemoryForDQN
 import tensorflow.contrib as tfcontrib
 from conf.key import CONFIG_KEY
 import easy_tf_log
-from src.model.ddpgModel.ddpgModel import UONoise
+# from src.model.ddpgModel.ddpgModel import UONoise
 import config as cfg
 
 class DQNModel(TensorflowBasedModel):
@@ -31,13 +31,15 @@ class DQNModel(TensorflowBasedModel):
                                          stop=high + 0.01,
                                          step=(high - low) / (split_count - 1)))
         self.action_step = (action_bound[1] - action_bound[0]) / (split_count - 1)
-        self.action_iterator = np.asarray(list(itertools.product(*action_list)))
-        print("self.action_iterator=", self.action_iterator, )
+        self._action_iterator = np.array(list(itertools.product(*action_list)))
+        self.init_action_iterator = self._action_iterator*1.0
+
+        print("self.action_iterator=", self.action_iterator,)
         # self.action_sample_list = []
         # for sample in self.action_iterator:
         #     self.action_sample_list
-        self.noise = UONoise()
-        self.noise_scale = 0.1 * (action_bound[1][i] - action_bound[0][i])
+        # self.noise = UONoise()
+        # self.noise_scale = 0.1 * (action_bound[1][i] - action_bound[0][i])
         self.reward_input = tf.placeholder(shape=[None, 1], dtype=tf.float32)
 
         self.state_input = tf.placeholder(shape=[None] + list(self.config.config_dict['STATE_SPACE']), dtype=tf.float32)
@@ -80,6 +82,12 @@ class DQNModel(TensorflowBasedModel):
 
         self.variables_initializer = tf.variables_initializer(var_list=self.var_list)
         self.sess = tf.get_default_session()
+
+    @property
+    def action_iterator(self):
+        assert np.equal(self.init_action_iterator, self._action_iterator).all()
+        return self._action_iterator
+
 
     def update(self):
         average_loss = 0.0
@@ -135,9 +143,10 @@ class DQNModel(TensorflowBasedModel):
                                self.action_input: self.action_iterator
                            })
             Qvalue = (res[0]).reshape([-1, ])
-            Qrange = max(Qvalue) - min(Qvalue) + 1e-9
-            Qvalue = 0.9 * (Qvalue - min(
-                Qvalue)) + 0.1 * np.random.rand() * Qrange  ###added action noise, to break tie or select some actions that are near optimal.
+            print("Predicting, raw Q value is {}".format(Qvalue))
+            # Qrange = max(Qvalue) - min(Qvalue) + 1e-9
+            # Qvalue = 0.9 * (Qvalue - min(Qvalue)) + 0.1 * np.random.rand() * Qrange  ###added action noise, to break tie or select some actions that are near optimal.
+            print("Predicting, noised Q value is {}".format(Qvalue))
             actions.append(self.action_iterator[np.argmax(Qvalue), :])
             q_value_max.append(np.max(Qvalue))
 
@@ -147,6 +156,26 @@ class DQNModel(TensorflowBasedModel):
             actions = actions[0]
         q_value_max = np.asarray(q_value_max)
         return actions, q_value_max
+
+    def evluate_actions(self, state):
+        sess = tf.get_default_session()
+        state = np.array(state)
+        if len(state.shape) < 2:
+            state_m = state.reshape([-1, self.config.config_dict['STATE_SPACE'][0]])
+        else:
+            state_m = state
+
+        q_values= []
+        for i in range(len(state_m)):
+            tmpstates = np.asarray([state_m[i, :] for j in range(len(self.action_iterator))])
+            res = sess.run(fetches=[self.q_output],
+                           feed_dict={
+                               self.state_input: tmpstates,
+                               self.action_input: self.action_iterator
+                           })
+            Qvalue = (res[0]).reshape([-1, ])
+            for j in range(len(Qvalue)):
+                print("Action=", self.action_iterator[j, :], "Q value=", Qvalue[j])
 
     def create_training_method(self):
         l1_l2 = tfcontrib.layers.l1_l2_regularizer()

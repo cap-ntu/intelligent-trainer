@@ -32,14 +32,22 @@ class IntelligentSampler(Sampler):
         print("Entered intel reset")
 
         if agent.env_status == agent.config.config_dict['REAL_ENVIRONMENT_STATUS']:
-            pass
-            for kkk_ in range(50):
-                state = env.reset()
-                squo = agent.model.q_value(state=state, step=0)
-                squo = self.F1 * squo + (1 - self.F1) * np.random.rand()
-                vs_list.append(squo)
-                if len(vs_list) > 5 and (np.max(vs_list) - np.min(vs_list)) * 0.999 + np.min(vs_list) < vs_list[-1]:
-                    break
+            if agent.ref_agent is not None and agent.status == agent.status_key['TRAIN']:
+                for kkk_ in range(50):
+                    state = env.reset()
+                    squo = agent.ref_agent.model.q_value(state=state, step=0)
+                    squo = self.F1 * squo + (1 - self.F1) * np.random.rand()
+                    vs_list.append(squo)
+                    if len(vs_list) > 5 and (np.max(vs_list) - np.min(vs_list)) * 0.999 + np.min(vs_list) < vs_list[-1]:
+                        break
+            else:
+                for kkk_ in range(50):
+                    state = env.reset()
+                    squo = agent.model.q_value(state=state, step=0)
+                    squo = self.F1 * squo + (1 - self.F1) * np.random.rand()
+                    vs_list.append(squo)
+                    if len(vs_list) > 5 and (np.max(vs_list) - np.min(vs_list)) * 0.999 + np.min(vs_list) < vs_list[-1]:
+                        break
         else:
             if np.random.rand() < self.F2:
                 idx = np.random.randint(agent.model.real_data_memory.observations0.length)

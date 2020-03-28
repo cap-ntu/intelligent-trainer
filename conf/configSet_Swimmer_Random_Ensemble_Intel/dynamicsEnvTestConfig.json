@@ -1,0 +1,10 @@
+{
+  "ACTION_SPACE": [
+    2
+  ],
+  "LOG_FLAG": 0,
+  "MAX_SAMPLE_HORIZON": 1000,
+  "STATE_SPACE": [
+    8
+  ]
+}

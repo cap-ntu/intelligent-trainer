@@ -19,6 +19,11 @@ from test.resDictList.mountainCarContinuous import mountain_car_continuous_dict
 from test.printAllPath import print_all_dir_name
 sns.set_style('ticks')
 
+from scipy import stats
+
+
+def getMostFrquentElement(nums):
+    return stats.mode(nums)[0][0]
 
 class Plotter(object):
     markers = ('+', 'x', 'v', 'o', '^', '<', '>', 's', 'p', '*', 'h', 'H', 'D', 'd', 'P', 'X')
@@ -144,7 +149,7 @@ class Plotter(object):
         plt.savefig(self.log_path + '/3.png')
 
     @staticmethod
-    def plot_multiple_target_agent_reward_no_show(path_list, save_flag=True, title=None, fig_id=4, label=' ',
+    def plot_multiply_target_agent_reward_no_show(path_list, save_flag=True, title=None, fig_id=4, label=' ',
                                                   save_path=None, assemble_flag=True):
 
         plt.figure(fig_id)
@@ -317,8 +322,8 @@ class Plotter(object):
         plt.show()
 
     @staticmethod
-    def plot_multiply_target_agent_reward(path_list, fig_id, save_flag=False, title=None, assemble_Flag=False):
-        Plotter.plot_multiple_target_agent_reward_no_show(path_list, save_flag, title, fig_id=fig_id,
+    def plot_multiply_target_agent_reward(path_list, fig_id, save_flag=True, title=None, assemble_Flag=True):
+        Plotter.plot_multiply_target_agent_reward_no_show(path_list, save_flag, title, fig_id=fig_id,
                                                           assemble_flag=assemble_Flag)
 
 
@@ -377,6 +382,18 @@ class Plotter(object):
                     for sample in test_data:
                         best_player.append(sample["BEST_PLAYER"])
                         sample_index.append(sample["REAL_ENV_COUNT"])
+
+                ### accumulate the bets infor for MCar
+                # ns = len(best_player)
+                # best_player_tmp = []
+                # sample_index_tmp = []
+                # for i in range(int(len(best_player)/ns)):
+                #     best_player_tmp.append(getMostFrquentElement(best_player[i*5: (i+1)*5]))
+                #     sample_index_tmp.append(np.max(sample_index[i*5: (i+1)*5]))
+                #
+                # best_player = best_player_tmp[0:1]
+                # sample_index = sample_index_tmp[0:1]
+
                 kindex = 0
                 real_sample_used_list = real_sample_used_lists[0]
                 reward_list = []

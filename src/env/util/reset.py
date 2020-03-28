@@ -13,7 +13,8 @@ def half_cheetah_reset_func():
     return half_cheetah_instance.reset()
 
 
-def continuous_mountain_car_reset_function():
+def \
+        continuous_mountain_car_reset_function():
     return np.array([np.random.uniform(low=-0.6, high=-0.4), 0])
 
 

@@ -3,7 +3,6 @@ import numpy as np
 from src.env.util.baselineTrainerEnvStep import BaselineTrainerEnvStep
 import math
 from src.env.util.trainerEnvReward import TrainerEnvReward
-import config as cfg
 
 
 class TrainerEnvStep(Step):
@@ -206,10 +205,7 @@ class TrainerEnvStep(Step):
         env.real_r_his = env.real_r_his + real_r_his
         env.cyber_r_his = cyber_r_his
         env.dyna_err_his = dyna_err_his
-        if 'TRAINER_ENV_STATE_AGENT_STEP_COUNT' in cfg.config_dict and cfg.config_dict['TRAINER_ENV_STATE_AGENT_STEP_COUNT'] is True:
-            obs = env.target_agent._real_env_sample_count / env.target_agent.config.config_dict['MAX_SAMPLE_COUNT']
-        else:
-            obs = env._get_obs()
+        obs = env._get_obs()
         reward = self.reward(env=env)
         done = False
         info[2] = True

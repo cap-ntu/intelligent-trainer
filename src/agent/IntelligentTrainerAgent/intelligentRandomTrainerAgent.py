@@ -25,10 +25,12 @@ class IntelligentRandomTrainerAgent(Agent):
             prob = np.random.rand(1)
             if prob <= 0.5:
                 res[i] = 1.0
+                # res[i] = 0.1
             else:
                 res[i] = 0.2
         self.sample_count += 1
-        return np.array(res)
+        # res = [0.5, 0.9, 0.1]
+        return np.array(res)*1.0
 
     def update(self):
         # TODO finish your own update by using API with self.model

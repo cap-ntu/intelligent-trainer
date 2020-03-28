@@ -6,7 +6,7 @@ import numpy as np
 CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(CURRENT_PATH)
 sys.path.append(CURRENT_PATH + '/../')
-from src.player import GamePlayer, AssembleGamePlayer
+from src.player import GamePlayer
 from src.config.config import Config
 from src.model.ddpgModel.ddpgModel import DDPGModel
 from src.model.dqnModel.dqnModel import DQNModel
@@ -193,10 +193,10 @@ def create_game_player(config_path, update_dict, env, agent, experiment_type, ba
                             ep_type=experiment_type, log_path_end_with=log_path_end)
     return player
 
-
-def create_assemble_player(main_player, ref_player_list):
-    assemble_player = AssembleGamePlayer(intel_player=main_player, ref_player_list=ref_player_list)
-    return assemble_player
+#
+# def create_assemble_player(main_player, ref_player_list):
+#     assemble_player = AssembleGamePlayer(intel_player=main_player, ref_player_list=ref_player_list)
+#     return assemble_player
 
 
 def create_random_ensemble_player(player_list, intel_index, fakeSamplers):

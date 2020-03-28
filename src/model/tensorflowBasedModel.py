@@ -66,7 +66,7 @@ class TensorflowBasedModel(Model):
         self.status = status
         while self.log_queue.qsize() > 0:
             log = self.log_queue.get()
-            print("%s: Loss %f: " % (self.name, log[self.name + '_LOSS']))
+            # print("%s: Loss %f: " % (self.name, log[self.name + '_LOSS']))
             log['INDEX'] = self.log_print_count
             self.log_file_content.append(log)
             self.log_print_count += 1
