@@ -57,6 +57,7 @@ class GamePlayer(Basic):
                              log_path_end=log_path_end_with)
 
         self.step_count = 0
+        self.config.config_dict['START_TIME'] = int(time.time())
 
     @property
     def real_env_sample_count(self):
@@ -98,7 +99,6 @@ class GamePlayer(Basic):
 
     def play(self, seed_new=None):
         self.set_seed(seed_new)
-        self.save_config()
         self.init()
 
         info_set = []
@@ -119,6 +119,8 @@ class GamePlayer(Basic):
             if self.real_env_sample_count > self.config.config_dict['MAX_REAL_ENV_SAMPLE']:
                 break
         # END
+        self.config.config_dict['END_TIME'] = int(time.time())
+        self.save_config()
 
         return info_set
 
@@ -163,10 +165,6 @@ class AssembleGamePlayer(object):
         for player in self.reference_players:
             player.set_seed(seed_new)
 
-        self.main_player.save_config()
-        for player in self.reference_players:
-            player.save_config()
-
         self.main_player.init()
         for player in self.reference_players:
             player.init()
@@ -191,6 +189,14 @@ class AssembleGamePlayer(object):
                 'SAMPLE_COUNT_PER_STEP'] > self.main_player.config.config_dict[
                 'MAX_REAL_ENV_SAMPLE'] * self.main_player.config.config_dict['REAL_ENV_SAMPLE_TRAIN_RATION']:
                 break
+
+        self.main_player.config.config_dict['END_TIME'] = int(time.time())
+        self.main_player.save_config()
+
+        for player in self.reference_players:
+            player.config.config_dict['END_TIME'] = int(time.time())
+            player.save_config()
+
         self.print_log_to_file()
         self.save_all_model()
         self.final_test_process()
@@ -296,7 +302,6 @@ class RandomEnsemblePlayer(Basic):
     def play(self, seed_new=None):
         for player in self.player_list:
             player.set_seed(seed_new)
-            player.save_config()
 
         for player in self.player_list:
             player.init()
@@ -314,6 +319,11 @@ class RandomEnsemblePlayer(Basic):
                     break
             if self.real_env_sample_count > self.total_real_env_sample:
                 break
+
+        for player in self.player_list:
+            player.config.config_dict['END_TIME'] = int(time.time())
+            player.save_config()
+
         self.print_log_to_file()
         self.save_all_model()
 
