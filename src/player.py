@@ -39,7 +39,9 @@ class GamePlayer(Basic):
                              log=log,
                              log_path=log_path,
                              log_path_end=log_path_end_with)
+
         self.step_count = 0
+        self.config.config_dict['START_TIME'] = int(time.time())
 
     @property
     def real_env_sample_count(self):
@@ -81,7 +83,6 @@ class GamePlayer(Basic):
 
     def play(self, seed_new=None):
         self.set_seed(seed_new)
-        self.save_config()
         self.init()
 
         info_set = []
@@ -102,6 +103,8 @@ class GamePlayer(Basic):
             if self.real_env_sample_count > self.config.config_dict['MAX_REAL_ENV_SAMPLE']:
                 break
         # END
+        self.config.config_dict['END_TIME'] = int(time.time())
+        self.save_config()
 
         return info_set
 
@@ -172,25 +175,7 @@ class RandomEnsemblePlayer(Basic):
 
         for player in self.player_list:
             player.set_seed(seed_new)
-            player.save_config()
-        futures = []
-        sess = tf.get_default_session()
-        g = tf.get_default_graph()
 
-        assert sess is not None, 'tf session is None'
-        assert g is not None, 'tf graph is None'
-
-        # def init_player(player):
-        #     with sess.as_default():
-        #         with g.as_default():
-        #             player.init()
-        #
-        # for player in self.player_list:
-        #     f = self._thread_executor.submit(init_player, (player))
-        #     futures.append(f)
-        #     # player.init()
-        # for f in futures:
-        #     f.result()
         for player in self.player_list:
             player.init()
 
@@ -208,6 +193,11 @@ class RandomEnsemblePlayer(Basic):
                     break
             if self.real_env_sample_count > self.total_real_env_sample:
                 break
+
+        for player in self.player_list:
+            player.config.config_dict['END_TIME'] = int(time.time())
+            player.save_config()
+
         self.print_log_to_file()
         self.save_all_model()
 
