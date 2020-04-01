@@ -144,18 +144,3 @@ class DDPGModelNew(TensorflowBasedModel):
                            reward=reward,
                            terminal1=done)
 
-
-if __name__ == '__main__':
-    from conf import CONFIG
-
-    con = Config(standard_key_list=DDPGModel.key_list)
-    con.load_config(path=CONFIG + '/targetModelTestConfig.json')
-
-    a = DDPGModel(config=con)
-    sess = tf.Session()
-    with sess.as_default():
-        a.init()
-        a.load_snapshot()
-        a.save_snapshot()
-        a.save_model(path='/home/linsen/.tmp/ddpg-model.ckpt', global_step=1)
-        a.load_model(file='/home/linsen/.tmp/ddpg-model.ckpt-1')

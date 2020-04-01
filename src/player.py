@@ -15,7 +15,7 @@ import threading
 from threading import Thread
 import time
 import config as cfg
-
+from concurrent.futures import ThreadPoolExecutor, Future
 
 
 class GamePlayer(Basic):
@@ -39,7 +39,6 @@ class GamePlayer(Basic):
                              log=log,
                              log_path=log_path,
                              log_path_end=log_path_end_with)
-
         self.step_count = 0
 
     @property
@@ -133,8 +132,6 @@ class GamePlayer(Basic):
         pass
 
 
-
-
 class RandomEnsemblePlayer(Basic):
     def __init__(self, player_list, intel_trainer_index=None, fakeSamplers=None):
         super(RandomEnsemblePlayer, self).__init__(config=None)
@@ -150,6 +147,7 @@ class RandomEnsemblePlayer(Basic):
         self.pre_sample_list = None
         self.step_count = 0
         self.reference_samp = [cfg.config_dict['SAMPLER_PROB'], cfg.config_dict['SAMPLER_PROB']]
+        self._thread_executor = ThreadPoolExecutor(max_workers=10)
 
     @property
     def best_index(self):
@@ -170,10 +168,29 @@ class RandomEnsemblePlayer(Basic):
         return self.player_list[0].env.target_agent._real_env_sample_count
 
     def play(self, seed_new=None):
+        # TODO add multi-threading here
+
         for player in self.player_list:
             player.set_seed(seed_new)
             player.save_config()
+        futures = []
+        sess = tf.get_default_session()
+        g = tf.get_default_graph()
 
+        assert sess is not None, 'tf session is None'
+        assert g is not None, 'tf graph is None'
+
+        # def init_player(player):
+        #     with sess.as_default():
+        #         with g.as_default():
+        #             player.init()
+        #
+        # for player in self.player_list:
+        #     f = self._thread_executor.submit(init_player, (player))
+        #     futures.append(f)
+        #     # player.init()
+        # for f in futures:
+        #     f.result()
         for player in self.player_list:
             player.init()
 
@@ -226,9 +243,24 @@ class RandomEnsemblePlayer(Basic):
         sample_list = []
 
         from copy import deepcopy as dp
+        futures = []
+        sess = tf.get_default_session()
+        g = tf.get_default_graph()
+        assert sess is not None, 'tf session is None'
+        assert g is not None, 'tf graph is None'
+
+        def call_step(player):
+            with sess.as_default():
+                with g.as_default():
+                    return player.step(step_flag=False)
+
         for i in range(self.player_count):
-            sample = self.player_list[i].step(step_flag=False)
-            sample_list.append(sample)
+            futures.append(self._thread_executor.submit(call_step, (self.player_list[i])))
+            # sample = self.player_list[i].step(step_flag=False)
+            # sample_list.append(sample)
+        for f in futures:
+            sample_list.append(f.result())
+
         self.cumulative_target_agent_real_env_sample_count += \
             self.player_list[0].env.target_agent._real_env_sample_count - pre_target_agent_real_env_sample_count
 
@@ -245,8 +277,8 @@ class RandomEnsemblePlayer(Basic):
                     player.agent.remain_action_flag = False
                 print("raw reward=", [np.sum(self.sample_list[i].reward_set) for i in range(self.player_count)])
                 rank_list = np.argsort([np.sum(self.sample_list[i].reward_set) for i in range(self.player_count)])
-                reward_factor = (1-cfg.config_dict['SAMPLER_PROB'])
-                reward_factor = reward_factor**2
+                reward_factor = (1 - cfg.config_dict['SAMPLER_PROB'])
+                reward_factor = reward_factor ** 2
                 if cfg.config_dict['SAMPLER_PROB'] > cfg.config_dict['ZeroThre']:
                     reward_factor = 0
                 # print("In Player before fake sampling action_iterator=",
@@ -254,7 +286,7 @@ class RandomEnsemblePlayer(Basic):
                 print("reward_factor=", reward_factor)
                 if reward_factor > 0:
                     for i in range(len(self.sample_list)):
-                        self.sample_list[rank_list[i]].reward_set[-1] = reward_factor*float(i)
+                        self.sample_list[rank_list[i]].reward_set[-1] = reward_factor * float(i)
                         ####
                         if np.isnan(self.sample_list[rank_list[i]].reward_set[-1]):
                             print("Nan observed")
@@ -264,8 +296,9 @@ class RandomEnsemblePlayer(Basic):
                             self.sample_list[i].action_set[-1][0:2] = self.pre_sample_list[i].action_set[-1][0:2]
                         # print("In Player before fake sampling action_iterator=",
                         #       self.player_list[0].agent.model.action_iterator)
-                        self.reward_his[rank_list[i]].append(reward_factor*float(i))
-                    print("new rank reward*reward factor=", [self.reward_his[i][-1] for i in range(len(self.sample_list))])
+                        self.reward_his[rank_list[i]].append(reward_factor * float(i))
+                    print("new rank reward*reward factor=",
+                          [self.reward_his[i][-1] for i in range(len(self.sample_list))])
                     for i in range(len(self.player_list)):
                         self.sample_list[i].state_set = self.sample_list[i].state_set[-1:]
                         self.sample_list[i].action_set = self.sample_list[i].action_set[-1:]
@@ -278,7 +311,8 @@ class RandomEnsemblePlayer(Basic):
                     for i in range(self.player_count):
                         self._store_sample_except(sample=self.sample_list[i],
                                                   except_list=())
-                        print("Newly got sample: action={}, reward={}".format(self.sample_list[i].action_set, self.sample_list[i].reward_set))
+                        print("Newly got sample: action={}, reward={}".format(self.sample_list[i].action_set,
+                                                                              self.sample_list[i].reward_set))
                         self.pre_sample_list = dp(self.sample_list)
                 self.sample_list = None
                 self.step_count += 1
@@ -302,13 +336,13 @@ class RandomEnsemblePlayer(Basic):
             self.best_index = best_index
             print("self.best_index=", self.best_index)
             worst_reward = np.min(acc_reward)
-            if sum(acc_reward-worst_reward)==0:
+            if sum(acc_reward - worst_reward) == 0:
                 advan_ratio = 0.5
             else:
-                advan_ratio = (acc_reward[best_index]-worst_reward)/sum(acc_reward-worst_reward)
+                advan_ratio = (acc_reward[best_index] - worst_reward) / sum(acc_reward - worst_reward)
 
             self.reference_samp[1] = (((advan_ratio - 0.5) / cfg.config_dict['phiRange']) **
-                                               cfg.config_dict['POW']) * 1
+                                      cfg.config_dict['POW']) * 1
 
             self.reference_samp[1] = min(self.reference_samp[1], cfg.config_dict['max_samP'])
 
@@ -340,7 +374,7 @@ class RandomEnsemblePlayer(Basic):
 
         print("self.reference_samp[1]=", self.reference_samp[1])
 
-        if self.cumulative_target_agent_real_env_sample_count / 3 < 10 and cfg.config_dict['RRThre']/3 < 30:
+        if self.cumulative_target_agent_real_env_sample_count / 3 < 10 and cfg.config_dict['RRThre'] / 3 < 30:
             self.reference_samp[1] = 0
             self.reference_samp[0] = 0
         if self.step_count < 0:
@@ -360,8 +394,6 @@ class RandomEnsemblePlayer(Basic):
         # print("In Player before fake sampling action_iterator=", self.player_list[0].agent.model.action_iterator)
         if 'STE_V3_TEST_MOVE_OUT' in cfg.config_dict and cfg.config_dict['STE_V3_TEST_MOVE_OUT'] is True:
             self.test()
-
-
 
     def test(self):
         for player in self.player_list:
