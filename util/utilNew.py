@@ -193,61 +193,6 @@ def create_intelligent_game(env_id, game_specific_config_path, bound_file, targe
     return player, sess
 
 
-def create_assemble_game(env_id,
-                         main_player_config_path,
-                         referencing_player_config_path_list,
-                         referencing_player_model_list,
-                         bound_file,
-                         main_target_model_type,
-                         main_intelligent_model_type,
-                         cost_fn=None,
-                         cuda_device=0,
-                         done_fn=None,
-                         reset_fn=None,
-                         exp_end_with=''):
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(cuda_device)
-
-    tf_config = tf.ConfigProto()
-    tf_config.gpu_options.allow_growth = True
-    sess = tf.Session(config=tf_config)
-    sess.__enter__()
-
-    main_player, _ = create_intelligent_game(env_id=env_id,
-                                             game_specific_config_path=main_player_config_path[1],
-                                             config_set_path=main_player_config_path[0],
-                                             bound_file=bound_file,
-                                             target_model_type=main_target_model_type,
-                                             intelligent_model_type=main_intelligent_model_type,
-                                             cost_fn=cost_fn,
-                                             cuda_device=cuda_device,
-                                             done_fn=done_fn,
-                                             reset_fn=reset_fn,
-                                             sess=sess,
-                                             exp_end_with=exp_end_with)
-    referencing_player_list = []
-    for i in range(len(referencing_player_config_path_list)):
-        player, _ = create_intelligent_game(env_id=env_id,
-                                            game_specific_config_path=referencing_player_config_path_list[i][1],
-                                            config_set_path=referencing_player_config_path_list[i][0],
-                                            bound_file=bound_file,
-                                            target_model_type=referencing_player_model_list[i][1],
-                                            intelligent_model_type=referencing_player_model_list[i][0],
-                                            cost_fn=cost_fn,
-                                            done_fn=done_fn,
-                                            reset_fn=reset_fn,
-                                            cuda_device=cuda_device,
-                                            sess=sess,
-                                            refer_intel_player=main_player,
-                                            name_prefix=referencing_player_model_list[i][0],
-                                            exp_end_with=exp_end_with)
-
-        # player.logger._log_dir = main_player.logger.log_dir + '_assemble_' + referencing_player_model_list[i][0]
-        referencing_player_list.append(player)
-    assembled_player = create_assemble_player(main_player=main_player, ref_player_list=referencing_player_list)
-
-    return assembled_player, sess
-
-
 def create_random_ensemble_game(env_id,
                                 bound_file,
                                 player_config_path_list,
