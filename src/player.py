@@ -247,9 +247,10 @@ class RandomEnsemblePlayer(Basic):
         for i in range(self.player_count):
             futures.append(self._thread_executor.submit(call_step, (self.player_list[i])))
             # sample = self.player_list[i].step(step_flag=False)
+            sample_list.append(futures[-1].result())
             # sample_list.append(sample)
-        for f in futures:
-            sample_list.append(f.result())
+        # for f in futures:
+        #     sample_list.append(f.result())
 
         self.cumulative_target_agent_real_env_sample_count += \
             self.player_list[0].env.target_agent._real_env_sample_count - pre_target_agent_real_env_sample_count
